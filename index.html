@@ -90,7 +90,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌡️ Temperature Converter</h1>
+        <h1>Temperature Converter</h1>
         
         <div class="converter-row">
             <input type="number" id="fromTemp" placeholder="Enter temperature" step="0.01">
@@ -159,6 +159,16 @@
             const fromUnit = fromUnitSelect.value;
             const toUnit = toUnitSelect.value;
             
+            // Check for negative Kelvin (impossible in physics)
+            if (fromUnit === 'kelvin' && inputValue < 0) {
+                toTempInput.value = 'Invalid: Negative Kelvin';
+                toTempInput.style.color = 'red';
+                return;
+            }
+            
+            // Reset text color in case it was red from error
+            toTempInput.style.color = 'black';
+            
             // If converting to the same unit, just copy the value
             if (fromUnit === toUnit) {
                 toTempInput.value = inputValue.toFixed(2);
@@ -196,6 +206,13 @@
                     break;
             }
 
+            // Check if result would be negative Kelvin
+            if (toUnit === 'kelvin' && result < 0) {
+                toTempInput.value = 'Invalid: Below Absolute Zero';
+                toTempInput.style.color = 'red';
+                return;
+            }
+
             // Display result rounded to 2 decimal places
             toTempInput.value = result.toFixed(2);
         }
@@ -204,6 +221,7 @@
         function clearAll() {
             fromTempInput.value = '';
             toTempInput.value = '';
+            toTempInput.style.color = 'black'; // Reset color
         }
 
         // Add event listeners to trigger conversion when user types or changes units
